@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Receipt</title>
+  <script>
+    function getQueryParams() {
+      const params = {};
+      location.search.substr(1).split("&").forEach(function(item) {
+        const [key, value] = item.split("=");
+        params[key] = decodeURIComponent(value);
+      });
+      return params;
+    }
+    window.onload = function() {
+      const params = getQueryParams();
+      document.getElementById("gymName").textContent = params.gymName || "Gym Name";
+      document.getElementById("memberName").textContent = params.memberName || "Member Name";
+      document.getElementById("amount").textContent = params.amount || "Amount";
+      document.getElementById("date").textContent = params.date || "Date";
+      document.getElementById("txnId").textContent = params.txnId || "Transaction ID";
+    }
+  </script>
+</head>
+<body>
+  <h2 id="gymName">Gym Name</h2>
+  <p>Member Name: <span id="memberName"></span></p>
+  <p>Amount: ₹<span id="amount"></span></p>
+  <p>Date: <span id="date"></span></p>
+  <p>Transaction ID: <span id="txnId"></span></p>
+</body>
+</html>
