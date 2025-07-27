@@ -1,31 +1,213 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Receipt</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gym Payment Receipt</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      padding: 20px;
+      max-width: 480px;
+      margin: auto;
+      background: #f8f9fa;
+      color: #333;
+    }
+
+    .receipt {
+      background: white;
+      border-radius: 12px;
+      padding: 25px 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .logo img {
+      max-width: 140px;
+      max-height: 90px;
+      border-radius: 4px;
+    }
+
+    h2 {
+      text-align: center;
+      margin: 15px 0;
+      color: #2c3e50;
+      position: relative;
+      padding-bottom: 10px;
+      font-weight: 600;
+    }
+
+    h2::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 25%;
+      width: 50%;
+      height: 3px;
+      background: linear-gradient(90deg, #3498db, #2ecc71);
+      border-radius: 3px;
+    }
+
+    hr.dashed {
+      border: none;
+      border-top: 1px dashed #e0e0e0;
+      margin: 25px 0;
+    }
+
+    .section {
+      margin-bottom: 15px;
+    }
+
+    .section p {
+      margin: 12px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    .label {
+      font-weight: 500;
+      color: #666;
+      min-width: 120px;
+      padding-right: 10px;
+    }
+
+    .section span:not(.label) {
+      color: #222;
+      font-weight: 500;
+      text-align: right;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    #amount {
+      font-size: 1.2em;
+      color: #27ae60;
+      font-weight: 600;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 14px;
+      margin-top: 25px;
+      color: #666;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    .footer p:first-child {
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 8px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 500px) {
+      body {
+        padding: 10px;
+      }
+      .receipt {
+        padding: 20px 15px;
+        border-radius: 8px;
+      }
+      .label {
+        min-width: 110px;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      .receipt {
+        box-shadow: none;
+        padding: 0;
+      }
+    }
+  </style>
   <script>
     function getQueryParams() {
       const params = {};
-      location.search.substr(1).split("&").forEach(function(item) {
+      location.search.substr(1).split("&").forEach(function (item) {
         const [key, value] = item.split("=");
-        params[key] = decodeURIComponent(value);
+        if (key) {
+          params[key] = decodeURIComponent(value || "");
+        }
       });
       return params;
     }
-    window.onload = function() {
-      const params = getQueryParams();
-      document.getElementById("gymName").textContent = params.gymName || "Gym Name";
-      document.getElementById("memberName").textContent = params.memberName || "Member Name";
-      document.getElementById("amount").textContent = params.amount || "Amount";
-      document.getElementById("date").textContent = params.date || "Date";
-      document.getElementById("txnId").textContent = params.txnId || "Transaction ID";
-    }
+
+    window.onload = function () {
+      const p = getQueryParams();
+
+      const timestamp = new Date().getTime();
+      const receiptId = (p.gymName || "Gym").replace(/\s+/g, "").substring(0, 4).toUpperCase() +
+                       "-" + timestamp.toString().slice(-6);
+
+      if (p.logoUrl) {
+        document.getElementById("logo").src = p.logoUrl;
+        document.getElementById("logo").style.display = "block";
+      }
+
+      document.getElementById("gymName").textContent = p.gymName || "Gym Name";
+      document.getElementById("receiptId").textContent = receiptId;
+      document.getElementById("date").textContent = p.date || new Date().toLocaleDateString('en-IN');
+
+      document.getElementById("memberName").textContent = p.memberName || "Member Name";
+      document.getElementById("memberId").textContent = p.memberId || "N/A";
+      document.getElementById("amount").textContent = p.amount ? `₹${parseInt(p.amount).toLocaleString('en-IN')}` : "₹0";
+
+      document.getElementById("contact").textContent = p.contact || "Not Provided";
+      document.getElementById("footerGymName").textContent = p.gymName || "Our Gym";
+    };
   </script>
 </head>
 <body>
+<div class="receipt">
+  <!-- Header Section -->
+  <div class="logo">
+    <img id="logo" style="display: none;" alt="Gym Logo" />
+  </div>
   <h2 id="gymName">Gym Name</h2>
-  <p>Member Name: <span id="memberName"></span></p>
-  <p>Amount: ₹<span id="amount"></span></p>
-  <p>Date: <span id="date"></span></p>
-  <p>Transaction ID: <span id="txnId"></span></p>
+  <div class="section">
+    <p><span class="label">Receipt ID:</span> <span id="receiptId"></span></p>
+    <p><span class="label">Payment Date:</span> <span id="date"></span></p>
+  </div>
+
+  <hr class="dashed" />
+
+  <!-- Member Details Section -->
+  <div class="section">
+    <p><span class="label">Member Name:</span> <span id="memberName"></span></p>
+    <p><span class="label">Member ID:</span> <span id="memberId"></span></p>
+    <p><span class="label">Amount Paid:</span> <span id="amount"></span></p>
+  </div>
+
+  <hr class="dashed" />
+
+  <!-- Footer Section -->
+  <div class="section">
+    <p><span class="label">Contact for queries:</span> <span id="contact"></span></p>
+  </div>
+  <div class="footer">
+    <p>Thank you for choosing <span id="footerGymName"></span>!</p>
+    <p>This is a system-generated receipt.</p>
+  </div>
+</div>
 </body>
 </html>
