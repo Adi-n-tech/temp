@@ -152,12 +152,36 @@
       return params;
     }
 
+    function getMonthAbbreviation(dateString) {
+      const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+      let date;
+
+      // Try parsing the date string if provided
+      if (dateString) {
+        date = new Date(dateString);
+        // If parsing fails (invalid date), use current date
+        if (isNaN(date.getTime())) {
+          date = new Date();
+        }
+      } else {
+        date = new Date();
+      }
+
+      return months[date.getMonth()];
+    }
+
+    function getPlanName(planMonths) {
+      if (!planMonths) return "N/A";
+      const months = parseInt(planMonths);
+      return months === 1 ? "1 Month" : `${months} Months`;
+    }
+
     window.onload = function () {
       const p = getQueryParams();
 
-      const timestamp = new Date().getTime();
-      const receiptId = (p.gymName || "Gym").replace(/\s+/g, "").substring(0, 4).toUpperCase() +
-                       "-" + timestamp.toString().slice(-6);
+      // Generate receipt ID using month abbreviation and member ID
+      const monthAbbr = getMonthAbbreviation(p.date);
+      const receiptId = monthAbbr + p.memberId;
 
       if (p.logoUrl) {
         document.getElementById("logo").src = p.logoUrl;
@@ -170,6 +194,7 @@
 
       document.getElementById("memberName").textContent = p.memberName || "Member Name";
       document.getElementById("memberId").textContent = p.memberId || "N/A";
+      document.getElementById("planName").textContent = getPlanName(p.planMonths);
       document.getElementById("amount").textContent = p.amount ? `₹${parseInt(p.amount).toLocaleString('en-IN')}` : "₹0";
 
       document.getElementById("contact").textContent = p.contact || "Not Provided";
@@ -195,6 +220,7 @@
   <div class="section">
     <p><span class="label">Member Name:</span> <span id="memberName"></span></p>
     <p><span class="label">Member ID:</span> <span id="memberId"></span></p>
+    <p><span class="label">Plan Name:</span> <span id="planName"></span></p>
     <p><span class="label">Amount Paid:</span> <span id="amount"></span></p>
   </div>
 
