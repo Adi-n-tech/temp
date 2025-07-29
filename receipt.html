@@ -90,7 +90,7 @@
       white-space: nowrap;
     }
 
-    #amount {
+    .amount {
       font-size: 1.2em;
       color: #27ae60;
       font-weight: 600;
@@ -176,6 +176,10 @@
       return months === 1 ? "1 Month" : `${months} Months`;
     }
 
+    function formatCurrency(amount) {
+      return amount ? `₹${parseInt(amount).toLocaleString('en-IN')}` : "₹0";
+    }
+
     window.onload = function () {
       const p = getQueryParams();
 
@@ -195,7 +199,19 @@
       document.getElementById("memberName").textContent = p.memberName || "Member Name";
       document.getElementById("memberId").textContent = p.memberId || "N/A";
       document.getElementById("planName").textContent = getPlanName(p.planMonths);
-      document.getElementById("amount").textContent = p.amount ? `₹${parseInt(p.amount).toLocaleString('en-IN')}` : "₹0";
+
+      // Handle admission amount (show only if present)
+      const admissionAmountRow = document.getElementById("admissionAmountRow");
+      if (p.admissionAmount) {
+        document.getElementById("admissionAmount").textContent = formatCurrency(p.admissionAmount);
+        admissionAmountRow.style.display = "flex";
+      } else {
+        admissionAmountRow.style.display = "none";
+      }
+
+      // Update amount paid label to clarify it's for plan fee
+      document.getElementById("amount").textContent = formatCurrency(p.amount);
+      document.getElementById("amountLabel").textContent = p.admissionAmount ? "Plan Fee Paid:" : "Amount Paid:";
 
       document.getElementById("contact").textContent = p.contact || "Not Provided";
       document.getElementById("footerGymName").textContent = p.gymName || "Our Gym";
@@ -221,7 +237,8 @@
     <p><span class="label">Member Name:</span> <span id="memberName"></span></p>
     <p><span class="label">Member ID:</span> <span id="memberId"></span></p>
     <p><span class="label">Plan Name:</span> <span id="planName"></span></p>
-    <p><span class="label">Amount Paid:</span> <span id="amount"></span></p>
+    <p id="admissionAmountRow" style="display: none;"><span class="label">Admission Fee:</span> <span id="admissionAmount" class="amount"></span></p>
+    <p><span class="label" id="amountLabel">Amount Paid:</span> <span id="amount" class="amount"></span></p>
   </div>
 
   <hr class="dashed" />
