@@ -24,15 +24,27 @@
       animation: fadeIn 0.4s ease-out;
     }
 
-    .logo {
+    .footer-logo {
       text-align: center;
-      margin-bottom: 15px;
+      margin: 15px 0 5px;
+      opacity: 0.8;
+      transition: opacity 0.3s ease;
     }
 
-    .logo img {
-      max-width: 140px;
-      max-height: 90px;
-      border-radius: 4px;
+    .footer-logo:hover {
+      opacity: 1;
+    }
+
+    .footer-logo img {
+      max-width: 70px;
+      max-height: 40px;
+      object-fit: contain;
+      filter: grayscale(30%);
+      transition: all 0.3s ease;
+    }
+
+    .footer-logo:hover img {
+      filter: grayscale(0%);
     }
 
     h2 {
@@ -99,7 +111,7 @@
     .footer {
       text-align: center;
       font-size: 14px;
-      margin-top: 25px;
+      margin-top: 10px;
       color: #666;
       padding-top: 15px;
       border-top: 1px solid #eee;
@@ -127,6 +139,9 @@
       .label {
         min-width: 110px;
       }
+      .footer-logo img {
+        max-width: 60px;
+      }
     }
 
     @media print {
@@ -137,6 +152,10 @@
       .receipt {
         box-shadow: none;
         padding: 0;
+      }
+      .footer-logo img {
+        filter: grayscale(0%) !important;
+        opacity: 1 !important;
       }
     }
   </style>
@@ -188,8 +207,8 @@
       const receiptId = monthAbbr + p.memberId;
 
       if (p.logoUrl) {
-        document.getElementById("logo").src = p.logoUrl;
-        document.getElementById("logo").style.display = "block";
+        document.getElementById("footer-logo").src = p.logoUrl;
+        document.getElementById("footer-logo").style.display = "block";
       }
 
       document.getElementById("gymName").textContent = p.gymName || "Gym Name";
@@ -221,9 +240,6 @@
 <body>
 <div class="receipt">
   <!-- Header Section -->
-  <div class="logo">
-    <img id="logo" style="display: none;" alt="Gym Logo" />
-  </div>
   <h2 id="gymName">Gym Name</h2>
   <div class="section">
     <p><span class="label">Receipt ID:</span> <span id="receiptId"></span></p>
@@ -246,6 +262,9 @@
   <!-- Footer Section -->
   <div class="section">
     <p><span class="label">Contact for queries:</span> <span id="contact"></span></p>
+  </div>
+  <div class="footer-logo">
+    <img id="footer-logo" style="display: none;" alt="Gym Logo" />
   </div>
   <div class="footer">
     <p>Thank you for choosing <span id="footerGymName"></span>!</p>
