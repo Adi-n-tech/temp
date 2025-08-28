@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GymXpert Subscription Receipt</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+    body {
+      font-family: 'Poppins', Arial, sans-serif;
+      padding: 20px;
+      max-width: 520px;
+      margin: auto;
+      background: #f4f6f9;
+      color: #333;
+    }
+
+    .receipt {
+      background: white;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    .brand {
+      text-align: center;
+      font-size: 1.6em;
+      font-weight: 600;
+      color: #3b82f6;
+      margin-bottom: 5px;
+    }
+
+    h2 {
+      text-align: center;
+      margin: 10px 0 20px;
+      color: #111;
+      font-size: 1.25em;
+      font-weight: 500;
+    }
+
+    hr.dashed {
+      border: none;
+      border-top: 1px dashed #ddd;
+      margin: 20px 0;
+    }
+
+    .section p {
+      margin: 8px 0;
+      display: flex;
+      justify-content: space-between;
+      font-size: 15px;
+    }
+
+    .label {
+      font-weight: 500;
+      color: #666;
+    }
+
+    .value {
+      font-weight: 600;
+      color: #222;
+    }
+
+    .amount {
+      font-size: 1.2em;
+      color: #16a34a;
+      font-weight: 700;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 13px;
+      margin-top: 20px;
+      color: #666;
+      border-top: 1px solid #eee;
+      padding-top: 12px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      .receipt {
+        box-shadow: none;
+        border-radius: 0;
+      }
+    }
+  </style>
+  <script>
+    function getQueryParams() {
+      const params = {};
+      location.search.substr(1).split("&").forEach(function (item) {
+        const [key, value] = item.split("=");
+        if (key) {
+          params[key] = decodeURIComponent(value || "");
+        }
+      });
+      return params;
+    }
+
+    function formatCurrency(amount) {
+      return amount ? `₹${parseInt(amount).toLocaleString('en-IN')}` : "₹0";
+    }
+
+    window.onload = function () {
+      const p = getQueryParams();
+
+      document.getElementById("receiptId").textContent = p.receiptId || "N/A";
+      document.getElementById("date").textContent = p.date || new Date().toLocaleDateString('en-IN');
+      document.getElementById("gymName").textContent = p.gymName || "Gym Name";
+      document.getElementById("ownerName").textContent = p.ownerName || "Gym Owner";
+      document.getElementById("plan").textContent = p.plan || "Subscription Plan";
+      document.getElementById("validTill").textContent = p.validTill || "N/A";
+      document.getElementById("startDate").textContent = p.startDate || "N/A";
+      document.getElementById("nextRenewalDate").textContent = p.nextRenewalDate || "N/A";
+      document.getElementById("planDurationDays").textContent = p.planDurationDays || "N/A";
+      document.getElementById("memberLimit").textContent = p.memberLimit || "N/A";
+
+      const basePrice = parseInt(p.basePrice || 0);
+      const discountAmount = parseInt(p.discountAmount || 0);
+      const finalAmount = parseInt(p.finalAmount || 0);
+
+      const priceSection = document.getElementById("priceSection");
+      if (discountAmount > 0) {
+        priceSection.innerHTML = `
+          <p><span class="label">Base Price:</span> <span class="value">${formatCurrency(basePrice)}</span></p>
+          <p><span class="label">Discount:</span> <span class="value">- ${formatCurrency(discountAmount)}</span></p>
+          <p><span class="label">Final Amount:</span> <span class="amount">${formatCurrency(finalAmount)}</span></p>
+        `;
+      } else {
+        priceSection.innerHTML = `
+          <p><span class="label">Final Amount:</span> <span class="amount">${formatCurrency(finalAmount)}</span></p>
+        `;
+      }
+    };
+  </script>
+</head>
+<body>
+  <div class="receipt">
+    <div class="brand">GymXpert</div>
+    <h2>Subscription Renewal Receipt</h2>
+
+    <div class="section">
+      <p><span class="label">Receipt ID:</span> <span class="value" id="receiptId"></span></p>
+      <p><span class="label">Payment Date:</span> <span class="value" id="date"></span></p>
+    </div>
+
+    <hr class="dashed" />
+
+    <div class="section">
+      <p><span class="label">Gym Name:</span> <span id="gymName"></span></p>
+      <p><span class="label">Owner Name:</span> <span id="ownerName"></span></p>      
+      <p><span class="label">Plan:</span> <span class="value" id="plan"></span></p>
+      <p><span class="label">Start Date:</span> <span class="value" id="startDate"></span></p>
+      <p><span class="label">Valid Till:</span> <span class="value" id="validTill"></span></p>
+      <p><span class="label">Next Renewal Date:</span> <span class="value" id="nextRenewalDate"></span></p>
+      <p><span class="label">Plan Duration:</span> <span class="value"><span id="planDurationDays"></span> days</span></p>
+      <p><span class="label">Member Limit:</span> <span class="value" id="memberLimit"></span></p>
+    </div>
+
+    <hr class="dashed" />
+
+    <div class="section" id="priceSection"></div>
+
+    <div class="footer">
+      <p>Thank you for renewing with GymXpert!</p>
+      <p>This is a system-generated receipt.</p>
+    </div>
+  </div>
+</body>
+</html>
